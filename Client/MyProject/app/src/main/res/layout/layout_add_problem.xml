@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryTr"
+    android:theme="@android:style/Theme.Translucent"
+    android:id="@+id/layout_button_problem_main"
+    >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="370dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:background="@color/colorWhite"
+        android:id="@+id/layout_button_problem"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Название задачи:"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:id="@+id/textview_add_name_problem"
+            android:layout_margin="10dp"/>
+
+        <EditText
+            android:id="@+id/editText_add_name_problem"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/textview_add_name_problem"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:hint="Введите название задачи..."/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Текст задачи:"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:id="@+id/textview_add_text_problem"
+            android:layout_below="@id/editText_add_name_problem"
+            android:layout_margin="10dp"/>
+
+        <EditText
+            android:id="@+id/editText_add_text_problem"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview_add_text_problem"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:hint="Введите текст задачи..."/>
+
+        <Button
+            android:id="@+id/button_addProblem"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPrimary"
+            android:text="Добавить задачу"
+            android:textColor="@color/colorWhite"
+            android:layout_below="@+id/editText_add_text_problem"
+            android:layout_alignLeft="@+id/editText_add_text_problem"
+            android:layout_alignStart="@+id/editText_add_text_problem"
+            android:layout_marginTop="15dp"/>
+    </RelativeLayout>
+
+</RelativeLayout>

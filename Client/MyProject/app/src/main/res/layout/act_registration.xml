@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorGray"
+    android:fitsSystemWindows="true"
+    tools:context=".Activity_entry">
+
+    <include
+        android:id="@+id/toolbar_reg"
+        layout="@layout/toolbar"
+        android:fitsSystemWindows="true" />
+
+    <EditText
+        android:id="@+id/editText_reg_first_name"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/toolbar_reg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="47dp"
+        android:background="@color/colorWhite"
+        android:hint="Имя"
+        android:paddingLeft="10dp" />
+
+    <EditText
+        android:id="@+id/editText_reg_second_name"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/editText_reg_first_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="7dp"
+        android:background="@color/colorWhite"
+        android:fitsSystemWindows="true"
+        android:hint="Фамилия"
+        android:paddingLeft="10dp" />
+
+    <EditText
+        android:id="@+id/editText_reg_login"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/editText_reg_second_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="7dp"
+        android:background="@color/colorWhite"
+        android:hint="Логин"
+        android:paddingLeft="10dp" />
+
+    <EditText
+        android:id="@+id/editText_reg_password"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/editText_reg_login"
+        android:layout_marginTop="7dp"
+        android:background="@color/colorWhite"
+        android:ems="10"
+        android:hint="Пароль"
+        android:inputType="textPassword"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="10dp" />
+
+    <EditText
+        android:id="@+id/editText_reg_password_repeate"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/editText_reg_password"
+        android:layout_marginTop="7dp"
+        android:background="@color/colorWhite"
+        android:ems="10"
+        android:hint="Повторите пароль"
+        android:inputType="textPassword"
+        android:paddingLeft="10dp"
+        android:layout_centerHorizontal="true"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editText_reg_password_repeate"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_reg"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/editText_reg_password_repeate"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/str_entry"
+        android:textColor="@color/colorWhite" />
+
+</RelativeLayout>

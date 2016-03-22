@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">AndroidApp</string>
+    <string name="str_entry">Вход</string>
+    <string name="str_req">Регистрация</string>
+    <string name="str_button_entry">Вход</string>
+    <string name="str_button_reg">Регистрация</string>
+
+    <string name="search_title">Search</string>
+
+    <string name="view_navigation_open">Open</string>
+    <string name="view_navigation_close">Close</string>
+
+    <string name="strGroups">Группы</string>
+    <string name="strProblems">Задачи</string>
+    <string name="strSettings">Настройки</string>
+    <string name="text_add_group">Название группы:</string>
+    <string name="button_text_add_group">Добавить группу</string>
+    <string name="str_count_students">Студенты:</string>
+    <string name="str_count_problems">Задачи:</string>
+</resources>
