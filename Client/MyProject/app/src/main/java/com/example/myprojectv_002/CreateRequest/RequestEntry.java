@@ -44,6 +44,7 @@ public class RequestEntry {
         try {
             UserInfo.nameUser = ret.get("namef").toString() + " " + ret.get("names").toString();
             UserInfo.idUser = Integer.parseInt(ret.get("idUser").toString());
+            UserInfo.loginUser=ret.get("login").toString();
         }
         catch (Exception e){
             e.printStackTrace();

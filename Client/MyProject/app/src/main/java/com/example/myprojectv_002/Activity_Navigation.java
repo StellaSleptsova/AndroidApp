@@ -19,6 +19,7 @@ import com.example.myprojectv_002.ClassesObject.UserInfo;
 import com.example.myprojectv_002.Fragments.fragments_navigation_item_groups;
 import com.example.myprojectv_002.Fragments.fragments_navigation_item_problems;
 import com.example.myprojectv_002.Fragments.fragments_navigation_item_setting;
+import com.example.myprojectv_002.Fragments.fragments_navigation_item_students;
 import com.example.myprojectv_002.ResourceAdapter.NavigationListAdapter;
 import com.example.myprojectv_002.ResourceItem.Navigation_Item;
 
@@ -67,6 +68,7 @@ public class Activity_Navigation extends AppCompatActivity {
         listViewNavigation = (ListView) findViewById(R.id.navigation_list);
 
         listNavigationItems = new ArrayList<Navigation_Item>();
+        listNavigationItems.add(new Navigation_Item("Студенты", R.mipmap.ic_account_multiple));
         listNavigationItems.add(new Navigation_Item("Группы", R.mipmap.ic_account_multiple));
         listNavigationItems.add(new Navigation_Item("Задачи", R.mipmap.ic_book_multiple));
         listNavigationItems.add(new Navigation_Item("Настройки", R.mipmap.ic_settings));
@@ -78,6 +80,7 @@ public class Activity_Navigation extends AppCompatActivity {
         textName.setText(UserInfo.nameUser);
 
         listFragments = new ArrayList<Fragment>();
+        listFragments.add(new fragments_navigation_item_students());
         listFragments.add(new fragments_navigation_item_groups());
         listFragments.add(new fragments_navigation_item_problems());
         listFragments.add(new fragments_navigation_item_setting());

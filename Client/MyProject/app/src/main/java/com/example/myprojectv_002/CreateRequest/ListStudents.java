@@ -8,9 +8,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Пользователь on 13.12.2015.
- */
 public class ListStudents {
 
     public ListStudents() {
@@ -18,12 +15,12 @@ public class ListStudents {
 
     private List<StudentInfo> students=null;
 
-    public String createRequest(Integer idGroup) {
+    public String createRequest(Integer idTeacher) {
         try {
             JSONObject object = new JSONObject();
             JSONObject dataUser = new JSONObject();
-            dataUser.put("idGroup", idGroup);
-            object.put("req", "listStudent");
+            dataUser.put("idTeacher", idTeacher);
+            object.put("req", "list_of_students");
             object.put("dataReq", dataUser);
             return (object.toString());
         } catch (Exception e) {

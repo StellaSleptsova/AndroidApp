@@ -45,7 +45,7 @@ public class fragment_list_student extends Fragment {
         Activity_Navigation.toolbar.setTitle("Список студентов");
 
         ListStudentsTask at = new ListStudentsTask();
-        at.execute(idGroup.toString());
+        at.execute();
         return v;
     }
 
@@ -63,7 +63,7 @@ public class fragment_list_student extends Fragment {
         else {
             yesStudent=true;
             for (int i = 0; i < countStudents; i++) {
-                listItem.add(new Student_item(listStudents.get(i).nameStudent, listStudents.get(i).countSolveProblems, listStudents.get(i).countProblem));
+                //listItem.add(new Student_item(listStudents.get(i).nameStudent, listStudents.get(i).countSolveProblems, listStudents.get(i).countProblem));
             }
         }
 

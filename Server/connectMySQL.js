@@ -6,7 +6,7 @@ function connectDataBase(){
 		port:'3306',
 		user:'root',
 		password:'cexrfcexrf',
-		database:'helpteacher',
+		database:'db_app',
 	});
 	
 	db.connect();

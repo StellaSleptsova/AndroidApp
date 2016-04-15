@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70px"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/text_name_group_for_student"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="Name Student"
+        android:textColor="@color/colorTextSubtitle"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_margin="8dp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_count_markTasks"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorCount"
+            android:text="10"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:id="@+id/text_count_unmarkTask"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorRed"
+            android:text="10"
+            android:layout_gravity="center_vertical"
+            android:layout_toRightOf="@id/text_count_markTasks" />
+    </RelativeLayout>
+</RelativeLayout>

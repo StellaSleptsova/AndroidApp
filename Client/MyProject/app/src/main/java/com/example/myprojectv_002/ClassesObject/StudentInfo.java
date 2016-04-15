@@ -9,13 +9,11 @@ import org.json.JSONObject;
 public class StudentInfo {
     public int idStudent;
     public String nameStudent;
-    public Integer countSolveProblems;
-    public Integer countProblem;
+    public String institution;
 
     public StudentInfo(JSONObject objRet) throws JSONException {
         idStudent = Integer.parseInt(objRet.get("idStudent").toString());
-        nameStudent = objRet.get("nameStudent").toString();
-        //countSolveProblems=Integer.parseInt(objRet.get("countSolveProblems").toString());
-        countSolveProblems=Integer.parseInt("12");
+        nameStudent = objRet.get("fnameStudent").toString() + " " + objRet.get("snameStudent").toString();
+        institution = objRet.get("institution").toString();
     }
 }

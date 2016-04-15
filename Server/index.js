@@ -15,6 +15,7 @@ handle["deleteStudent"] = requestHandlers.deleteStudent;
 handle["getTextProblem"] = requestHandlers.getTextProblem;
 handle["addNewProblem"] = requestHandlers.addNewProblem;
 handle["addNewStudent"] = requestHandlers.addNewStudent;
+handle["list_of_students"] = requestHandlers.list_of_students;
 
 var db = dataBase.connectDataBase();
 server.start(db, router.route, handle);

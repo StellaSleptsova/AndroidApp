@@ -17,4 +17,5 @@
     <string name="button_text_add_group">Добавить группу</string>
     <string name="str_count_students">Студенты:</string>
     <string name="str_count_problems">Задачи:</string>
+    <string name="str_send_message">Send message</string>
 </resources>

@@ -70,6 +70,8 @@ public class Entry extends Fragment {
                             toastPass.show();
                         }
                         else{
+                            //Intent intentEntry = new Intent(getActivity(), Activity_Navigation.class);
+                            //getActivity().startActivity(intentEntry);
                             EntryTask entryTask = new EntryTask();
                             entryTask.execute(editText_login.getText().toString(),editText_password.getText().toString());
                         }

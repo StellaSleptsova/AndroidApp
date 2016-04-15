@@ -1,8 +1,60 @@
+function sockWriteAndDestroy(sock, data){
+	sock.write(data);
+	sock.destroy();
+}
+
+function getDataFromDatabase(db, request, functionRequestDb){
+	db.query(request, function(error, result, fields){
+		if(error){
+			console.log("ERROR: request from db");
+		}
+		functionRequestDb(dbs,fghbd.dhf);
+	});
+}
+
+function list_of_students(sock, db, dataJson){
+	var id_teacher=dataJson.dataReq.idTeacher;
+	var data_from_db;
+	var arrInfoStudents = new Array();
+	var oneStudent;
+	console.log(dataJson.toString());
+	db.query('select Students.id_st as id, Students.f_name_student as fname, Students.s_name_student as sname, Students.institution from Students join conn_st_tr  where conn_st_tr.id_tr="'+id_teacher+'" and Students.id_st=conn_st_tr.id_st;', function(error,result,fields){
+		if(error){
+			console.log("ErrorMySql_list_of_students");
+			console.log(error.toString());
+			return;
+		}
+		if(result[0]!=undefined){
+			for(var i=0; i<result.length;i++){
+				oneStudent={
+					idStudent: result[i].id,
+					fnameStudent: result[i].fname,
+					snameStudent: result[i].sname,
+					institution: result[i].institution
+				};
+			    arrInfoStudents[i]=oneStudent;
+			}
+			data_from_db={
+					answer: "yesStudents",
+					infoStudents: arrInfoStudents,
+				};
+		}
+		else{
+			data_from_db={
+				answer: "noStudents"
+			};
+		}
+		console.log(data_from_db.toString());
+		data_from_db=JSON.stringify(data_from_db);
+		sockWriteAndDestroy(sock,data_from_db);
+	});
+}
+
 function entry(sock, db, dataJson){
 	console.log("entry");
 	var login=dataJson.dataUser.login;
 	var password=dataJson.dataUser.password;
-	db.query('select id_teacher,password_teacher,first_name_teacher,second_name_teacher FROM teachers WHERE login_teacher= "'+login+'"',function(error,result,fields){
+	db.query('select id_tr,login_teacher,password_teacher,f_name_teacher,s_name_teacher FROM Teachers WHERE login_teacher= "'+login+'"',function(error,result,fields){
 		if(error){
 			console.log("ErrorMySql_entry");
 		}
@@ -11,13 +63,12 @@ function entry(sock, db, dataJson){
 				console.log("ok");
 				var data_from_db={
 					answerUser: "ok",
-					idUser: result[0].id_teacher.toString(),
-					namef: result[0].first_name_teacher.toString(),
-					names: result[0].second_name_teacher.toString(),
+					idUser: result[0].id_tr.toString(),
+					login: result[0].login_teacher.toString(),
+					namef: result[0].f_name_teacher.toString(),
+					names: result[0].s_name_teacher.toString(),
 				};
 				var data_from_db=JSON.stringify(data_from_db);
-				sock.write(data_from_db);
-				sock.destroy();
 			}
 			else{
 				console.log("incorrect password");
@@ -25,8 +76,6 @@ function entry(sock, db, dataJson){
 					answerUser: "incorrect password"
 				};
 				var data_from_db=JSON.stringify(data_from_db);
-				sock.write(data_from_db);
-				sock.destroy();
 			}
 		}
 		else{
@@ -35,11 +84,20 @@ function entry(sock, db, dataJson){
 				answerUser: "incorrect login"
 			};
 			var data_from_db=JSON.stringify(data_from_db);
-			sock.write(data_from_db);
-			sock.destroy();
 		}
+		sockWriteAndDestroy(sock, data_from_db);
 	});
 }
+
+/*function addTeacher(sock, db, dataJson){
+	console.log("addTeacher");
+	var loginTeacher=dataJson.dataUser.login;
+	db.query('select count(*) as bool from teachers where login_teacher="'loginTeacher'"',function(error,result,fields){
+		if(error){
+			console.log
+		}
+	});
+}*/
 
 function listGroup(sock, db, dataJson){
 	console.log("list group");
@@ -389,3 +447,5 @@ exports.deleteStudent = deleteStudent;
 exports.getTextProblem = getTextProblem;
 exports.addNewProblem = addNewProblem;
 exports.addNewStudent = addNewStudent;
+
+exports.list_of_students=list_of_students;
