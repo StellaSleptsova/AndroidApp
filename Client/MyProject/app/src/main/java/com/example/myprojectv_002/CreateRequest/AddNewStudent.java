@@ -2,21 +2,19 @@ package com.example.myprojectv_002.CreateRequest;
 
 import org.json.JSONObject;
 
-/**
- * Created by Пользователь on 14.12.2015.
- */
 public class AddNewStudent {
 
     public AddNewStudent() {
     }
 
-    public String createRequest(String fname, String sname, Integer idG) {
+    public String createRequest(String fname, String sname,String inst, Integer idT) {
         try {
             JSONObject object = new JSONObject();
             JSONObject dataReq = new JSONObject();
             dataReq.put("fnameNewStudent", fname);
             dataReq.put("snameNewStudent", sname);
-            dataReq.put("idGroup", idG);
+            dataReq.put("institution",inst );
+            dataReq.put("idTeacher", idT);
             object.put("req", "addNewStudent");
             object.put("dataReq", dataReq);
             return (object.toString());

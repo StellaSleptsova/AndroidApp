@@ -15,6 +15,7 @@ public class RequestEntry {
             JSONObject dataUser = new JSONObject();
             dataUser.put("login", login);
             dataUser.put("password", pass);
+            dataUser.put("user", UserInfo.student_or_teacher);
             object.put("req", "entry");
             object.put("dataUser", dataUser);
             return(object.toString());
@@ -30,7 +31,7 @@ public class RequestEntry {
             JSONObject retJson = new JSONObject(str);
             String response = retJson.get("answerUser").toString();
             if(response.equals("ok")){
-                setUserInfo(retJson);
+                UserInfo.setUserInfo(retJson);
             }
             return response;
         }
@@ -40,15 +41,4 @@ public class RequestEntry {
         }
     }
 
-    private void setUserInfo(JSONObject ret){
-        try {
-            UserInfo.nameUser = ret.get("namef").toString() + " " + ret.get("names").toString();
-            UserInfo.idUser = Integer.parseInt(ret.get("idUser").toString());
-            UserInfo.loginUser=ret.get("login").toString();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return;
-        }
-    }
 }

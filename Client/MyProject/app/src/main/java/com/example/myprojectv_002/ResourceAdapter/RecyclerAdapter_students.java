@@ -1,51 +1,29 @@
 package com.example.myprojectv_002.ResourceAdapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.PopupMenu;
 
 import com.example.myprojectv_002.ClassesObject.StudentInfo;
+import com.example.myprojectv_002.Fragments.PopUpMenuEventHandle;
 import com.example.myprojectv_002.R;
-import com.example.myprojectv_002.ResourceItem.ListOfGroupForStudent_item;
+import com.example.myprojectv_002.ResourceItem.ViewHolder_Students;
 
 import java.util.List;
 
-public class RecyclerAdapter_students extends RecyclerView.Adapter<RecyclerAdapter_students.ViewHolder>{
+public class RecyclerAdapter_students extends RecyclerView.Adapter<ViewHolder_Students> {
     private List<StudentInfo> listStudents;
-    public RecyclerAdapter_students(List<StudentInfo> listSt){
-        listStudents=listSt;
+
+    public RecyclerAdapter_students(List<StudentInfo> listSt) {
+        listStudents = listSt;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView tv_namestudent;
-        public TextView tv_institution;
-        public Button button_show_list_group;
-        public Button button_send_message;
 
-        public ListView listGroup;
-        public Context context;
-        //public List<ListOfGroupForStudent_item> listItem;
-        public listAdapter listAdapter;
-        public boolean buttonShowClicked = false;
 
-        public ViewHolder(View v){
-            super(v);
-            tv_namestudent=(TextView)v.findViewById(R.id.text_student_name);
-            tv_institution=(TextView)v.findViewById(R.id.student_info);
-            button_show_list_group=(Button)v.findViewById(R.id.button_show_listGroup);
-            button_send_message=(Button)v.findViewById(R.id.button_send_message);
-            //listView=(ListView)v.findViewById(R.id.list_students__nav);
-            context=v.getContext();
-        }
-    }
-
-    public static class listAdapter extends ArrayAdapter<ListOfGroupForStudent_item>{
+    /*public static class listAdapter extends ArrayAdapter<ListOfGroupForStudent_item>{
         Context context;
         int resLayout;
         List<ListOfGroupForStudent_item> listItems;
@@ -72,18 +50,18 @@ public class RecyclerAdapter_students extends RecyclerView.Adapter<RecyclerAdapt
 
             return v;
         }
-    }
+    }*/
 
     @Override
-    public RecyclerAdapter_students.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public ViewHolder_Students onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_fragment_students, parent, false);
-        ViewHolder vh =new ViewHolder(v);
+        ViewHolder_Students vh = new ViewHolder_Students(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position){
+    public void onBindViewHolder(final ViewHolder_Students holder, final int position) {
         holder.tv_namestudent.setText(listStudents.get(position).nameStudent);
         holder.tv_institution.setText(listStudents.get(position).institution);
         /*holder.button_show_list_group.setOnClickListener(new View.OnClickListener() {
@@ -101,10 +79,10 @@ public class RecyclerAdapter_students extends RecyclerView.Adapter<RecyclerAdapt
                         holder.listItem.add(new ListOfGroupForStudent_item("341 group", 13, 15));
                         holder.listItem.add(new ListOfGroupForStudent_item("231 group", 10, 15));
                         holder.listItem.add(new ListOfGroupForStudent_item("141 group", 3, 17));
-                        holder.listAdapter = new listAdapter(holder.context, R.layout.item_list_group_for_student, holder.listItem);
+                        holder.listAdapter = new listAdapter(holder.context, R.layout.tem_list_group_for_student, holder.listItem);
                         holder.listView.setAdapter(holder.listAdapter);
                      }
-                    holder.button_show_list_group.setBackgroundResource(R.mipmap.ic_keyboard_arrow_down);
+                    holder.button_show_list_group.setBackgroundResource(R.mipmap.ic_chevron_down);
                     ViewGroup.LayoutParams params=holder.listView.getLayoutParams();
                     params.height=53*holder.listItem.size();
                     holder.listView.setLayoutParams(params);
@@ -112,10 +90,21 @@ public class RecyclerAdapter_students extends RecyclerView.Adapter<RecyclerAdapt
                 }
             }
         });*/
+        holder.button_show_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(holder.context, v);
+                MenuInflater menuInflater = popupMenu.getMenuInflater();
+                PopUpMenuEventHandle popUpMenuEventHandle = new PopUpMenuEventHandle(holder.context, "Student", listStudents.get(position).idStudent);
+                popupMenu.setOnMenuItemClickListener(popUpMenuEventHandle);
+                menuInflater.inflate(R.menu.menu_for_card, popupMenu.getMenu());
+                popupMenu.show();
+            }
+        });
     }
 
     @Override
-    public int getItemCount(){
+    public int getItemCount() {
         return listStudents.size();
     }
 }

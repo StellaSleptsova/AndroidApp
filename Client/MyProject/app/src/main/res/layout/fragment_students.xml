@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorGray">
+    android:background="@color/colorGray"
+    android:id="@+id/clayout_list_student">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_students"
@@ -12,4 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_list_student"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_plus"
+        app:layout_anchor="@id/clayout_list_student"
+        app:layout_anchorGravity="bottom|right|end"
+        android:layout_margin="20dp"
+        app:backgroundTint="@color/colorPrimary"/>
+</android.support.design.widget.CoordinatorLayout>

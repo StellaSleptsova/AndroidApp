@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myprojectv_002.Activity_Navigation;
 import com.example.myprojectv_002.ClassesObject.ServerInfo;
+import com.example.myprojectv_002.ClassesObject.UserInfo;
 import com.example.myprojectv_002.CreateRequest.AddNewStudent;
 import com.example.myprojectv_002.CreateRequest.SendRequest;
 import com.example.myprojectv_002.R;
@@ -25,13 +27,10 @@ public class fragment_add_student extends Fragment {
     Button buttonAddStudent;
     EditText fnameNewProblem;
     EditText snameNewProblem;
+    EditText institutionStudent;
+    TextView tv_warning;
     View v;
     Toast toastPass;
-    private int idGroup;
-
-    public void setIdGroup(Integer i) {
-        this.idGroup = i;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,11 +42,13 @@ public class fragment_add_student extends Fragment {
         buttonAddStudent=(Button)v.findViewById(R.id.button_addStudent);
         fnameNewProblem=(EditText)v.findViewById(R.id.editText_add_fname_student);
         snameNewProblem=(EditText)v.findViewById(R.id.editText_add_sname_student);
+        institutionStudent=(EditText)v.findViewById(R.id.editText_add_institution_student);
+        tv_warning=(TextView)v.findViewById(R.id.tv_warning);
+        tv_warning.setVisibility(View.INVISIBLE);
 
         buttonLayoutAddProblem.setOnClickListener(onClickListenermain);
         buttonLayoutProblem.setOnClickListener(onClickListenermain);
         buttonAddStudent.setOnClickListener(onClickListenermain);
-
         return v;
     }
 
@@ -57,27 +58,22 @@ public class fragment_add_student extends Fragment {
             switch (v.getId()) {
                 case R.id.layout_button_student_main:
                     Activity_Navigation.fragmentManager.popBackStack();
+                    fragments_navigation_item_students.fab_student.setVisibility(View.VISIBLE);
+                    Activity_Navigation.toolbar.setTitle("Студенты");
                     break;
                 case R.id.layout_button_student:
                     break;
                 case R.id.button_addStudent:
-                    if (fnameNewProblem.getText().toString().equals("")){
-                        toastPass = Toast.makeText(getActivity(), "Введите имя студента", Toast.LENGTH_LONG);
-                        toastPass.setGravity(Gravity.CENTER, 0, -90);
-                        toastPass.show();
-                        return;
-                    }
-                    else {
-                        if(snameNewProblem.getText().toString().equals("")){
-                            toastPass = Toast.makeText(getActivity(), "Введите амилию студента", Toast.LENGTH_LONG);
-                            toastPass.setGravity(Gravity.CENTER, 0, -90);
-                            toastPass.show();
-                            return;
-                        }
-                        else {
-                            addStudentTask at = new addStudentTask();
-                            at.execute(fnameNewProblem.getText().toString(), snameNewProblem.getText().toString());
-                        }
+                    buttonAddStudent.setClickable(false);
+                    if (fnameNewProblem.getText().toString().equals("") || snameNewProblem.getText().toString().equals("")
+                            || institutionStudent.getText().toString().equals("")) {
+                        tv_warning.setVisibility(View.VISIBLE);
+                        buttonAddStudent.setClickable(true);
+                    } else {
+                        Activity_Navigation.progressDialog.show();
+                        Activity_Navigation.hideKeyBoard(v.getContext(),v);
+                        addStudentTask at = new addStudentTask();
+                        at.execute(fnameNewProblem.getText().toString(), snameNewProblem.getText().toString(), institutionStudent.getText().toString());
                     }
                     break;
             }
@@ -94,6 +90,7 @@ public class fragment_add_student extends Fragment {
             super.onPreExecute();
             sendRequest=new SendRequest();
             addNewStudent=new AddNewStudent();
+            Activity_Navigation.progressDialog.show();
         }
 
         @Override
@@ -101,14 +98,14 @@ public class fragment_add_student extends Fragment {
             try {
                 socketClient.close();
                 System.out.println(ret);
+                buttonAddStudent.setClickable(true);
+                Activity_Navigation.progressDialog.dismiss();
                 switch (addNewStudent.getResponse(ret)) {
                     case "newStudentAdded":
-                        fragment_list_student fragment_list_student=new fragment_list_student();
-                        fragment_list_student.setIdGroup(idGroup);
-                        Activity_Navigation.fragmentManager.beginTransaction().replace(R.id.main_content, fragment_list_student).addToBackStack("stack").commit();
-                        toastPass = Toast.makeText(getActivity(), "Новый студент добавлен", Toast.LENGTH_LONG);
-                        toastPass.setGravity(Gravity.CENTER, 0, -90);
-                        toastPass.show();
+                        Activity_Navigation.deleteAllFragment();
+                        fragments_navigation_item_students fragment_student =new fragments_navigation_item_students();
+                        fragment_student.isChange=true;
+                        Activity_Navigation.fragmentManager.beginTransaction().replace(R.id.main_content, fragment_student).addToBackStack("stack").commit();
                         //Activity_Navigation.fragmentManager.beginTransaction().replace(R.id.main_content, new fragments_navigation_item_groups()).commit();
                         break;
                     case "error":
@@ -128,7 +125,7 @@ public class fragment_add_student extends Fragment {
                 InetAddress serverAddr = InetAddress.getByName(ServerInfo.getIP());
                 System.out.println(serverAddr);
                 socketClient = new Socket(serverAddr, ServerInfo.getPort());
-                return (sendRequest.SendAndGet(socketClient, addNewStudent.createRequest(data[0],data[1],idGroup)));
+                return (sendRequest.SendAndGet(socketClient, addNewStudent.createRequest(data[0],data[1],data[2], UserInfo.idUser)));
             } catch (Exception e) {
                 e.printStackTrace();
                 return e.getMessage();

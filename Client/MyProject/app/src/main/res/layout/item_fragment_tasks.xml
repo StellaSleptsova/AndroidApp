@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingTop="7dp">
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:cardElevation="1dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:paddingTop="5dp">
+
+            <RelativeLayout
+                android:id="@+id/rLayout_infoTasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="0dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="20dp">
+
+                    <TextView
+                        android:id="@+id/text_tasks_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:text="Name of task"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/task_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/text_tasks_name"
+                        android:layout_marginTop="2dp"
+                        android:text="20 ноября 21:22"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+                <Button
+                    android:id="@+id/button_show_menu_task"
+                    android:layout_width="23dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="10dp"
+                    android:background="@mipmap/ic_dots_vertical"
+                    android:stateListAnimator="@null" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rLayout_infoTasks"
+                android:id="@+id/rLayout_button_task"
+                android:layout_marginTop="4dp">
+
+                <Button
+                    android:id="@+id/button_show_list_group_in_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:background="@color/colorWhite"
+                    android:stateListAnimator="@null"
+                    android:text="Группы"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorTextSubtitle" />
+
+
+                <Button
+                    android:id="@+id/button_show_textTask"
+                    android:layout_width="30dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@mipmap/ic_chevron_up"
+                    android:stateListAnimator="@null" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rLayout_button_task">
+
+                <TextView
+                    android:id="@+id/tv_text_task"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:textColor="@color/colorTextSubtitle"
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

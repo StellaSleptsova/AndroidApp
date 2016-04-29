@@ -9,4 +9,6 @@
     <color name="colorRed">#e6150e</color>
     <color name="colorGray">#dcdcdc</color>
     <color name="colorPrimaryTr">#64000000</color>
+    <color name="colorWarning">#ed601a</color>
+    <color name="colorList">#e5f1f5</color>
 </resources>

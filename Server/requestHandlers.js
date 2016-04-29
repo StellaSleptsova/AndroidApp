@@ -1,14 +1,95 @@
 function sockWriteAndDestroy(sock, data){
-	sock.write(data);
+	sock.write(JSON.stringify(data));
 	sock.destroy();
 }
 
-function getDataFromDatabase(db, request, functionRequestDb){
-	db.query(request, function(error, result, fields){
+function sendError(sock,error,strError){
+	console.log("ErrorMySql_"+strError);
+	console.log(error.toString());
+	var data_from_db={
+		answer: "error",
+	};
+	sockWriteAndDestroy(sock,data_from_db);
+}
+
+function entry(sock, db, dataJson){
+	console.log("entry");
+	var login=dataJson.dataUser.login;
+	var password=dataJson.dataUser.password;
+	var user=dataJson.dataUser.user;
+	var str_req;
+	if(parseInt(user)==1){
+		str_req='select id_tr as id,login_teacher as login,password_teacher as password,f_name_teacher as fname,s_name_teacher as sname,institution FROM Teachers WHERE login_teacher= "'+login+'"';
+	}
+	else {
+		str_req='select id_st as id ,login_student as login,password_student as password,f_name_student as fname,s_name_student as sname, institution FROM Students WHERE login_student="'+login+'"';
+	}
+	db.query(str_req,function(error,result,fields){
 		if(error){
-			console.log("ERROR: request from db");
+			sendError(sock,error,"entry");
+			return;
 		}
-		functionRequestDb(dbs,fghbd.dhf);
+		if(result[0]!=undefined){
+			if(result[0].password==password){
+				console.log("ok");
+				var data_from_db={
+					answerUser: "ok",
+					idUser: result[0].id.toString(),
+					login: result[0].login.toString(),
+					fname: result[0].fname.toString(),
+					sname: result[0].sname.toString(),
+					institution:result[0].institution.toString(),
+				};
+			}
+			else{
+				console.log("incorrect password");
+				var data_from_db={
+					answerUser: "incorrect"
+				};
+			}
+		}
+		else{
+			console.log( "incorrect login");
+			var data_from_db={
+				answerUser: "incorrect"
+			};
+		}
+		sockWriteAndDestroy(sock, data_from_db);
+	});
+}
+
+function registration(sock, db, dataJson){
+	console.log("registration");
+	var fname=dataJson.dataUser.fname.toString();
+	var sname=dataJson.dataUser.sname.toString();
+	var institution=dataJson.dataUser.institution.toString();
+	var login=dataJson.dataUser.login.toString();
+	var pass=dataJson.dataUser.pass.toString();
+	var user=dataJson.dataUser.user;
+	var data_from_db;
+	var str_req;
+	if(parseInt(user)==1){
+		str_req='INSERT INTO Teachers(login_teacher,password_teacher,f_name_teacher,s_name_teacher,institution) values("'+login+'","'+pass+'","'+fname+'","'+sname+'","'+institution+'")';
+	}
+	else {
+		str_req='INSERT INTO Students(login_student,password_student,f_name_student,s_name_student,institution) values("'+login+'","'+pass+'","'+fname+'","'+sname+'","'+institution+'")';
+	}
+	db.query(str_req,function(error,result,fields){
+		if(error){
+			 if(error.toString().substring(21,36)=="Duplicate entry"){
+				data_from_db={
+					answer:"incorrect"
+				};
+				sockWriteAndDestroy(sock,data_from_db);
+			 }else{
+				 sendError(sock,error,"ErrorMySql_Registration");
+			 }
+			return;
+		}
+		data_from_db={
+			answer: "ok"
+		};
+		sockWriteAndDestroy(sock, data_from_db);
 	});
 }
 
@@ -20,8 +101,7 @@ function list_of_students(sock, db, dataJson){
 	console.log(dataJson.toString());
 	db.query('select Students.id_st as id, Students.f_name_student as fname, Students.s_name_student as sname, Students.institution from Students join conn_st_tr  where conn_st_tr.id_tr="'+id_teacher+'" and Students.id_st=conn_st_tr.id_st;', function(error,result,fields){
 		if(error){
-			console.log("ErrorMySql_list_of_students");
-			console.log(error.toString());
+			sendError(sock,error,"list_of_students");
 			return;
 		}
 		if(result[0]!=undefined){
@@ -45,407 +125,321 @@ function list_of_students(sock, db, dataJson){
 			};
 		}
 		console.log(data_from_db.toString());
-		data_from_db=JSON.stringify(data_from_db);
 		sockWriteAndDestroy(sock,data_from_db);
 	});
 }
-
-function entry(sock, db, dataJson){
-	console.log("entry");
-	var login=dataJson.dataUser.login;
-	var password=dataJson.dataUser.password;
-	db.query('select id_tr,login_teacher,password_teacher,f_name_teacher,s_name_teacher FROM Teachers WHERE login_teacher= "'+login+'"',function(error,result,fields){
-		if(error){
-			console.log("ErrorMySql_entry");
-		}
-		if(result[0]!=undefined){
-			if(result[0].password_teacher==password){
-				console.log("ok");
-				var data_from_db={
-					answerUser: "ok",
-					idUser: result[0].id_tr.toString(),
-					login: result[0].login_teacher.toString(),
-					namef: result[0].f_name_teacher.toString(),
-					names: result[0].s_name_teacher.toString(),
-				};
-				var data_from_db=JSON.stringify(data_from_db);
-			}
-			else{
-				console.log("incorrect password");
-				var data_from_db={
-					answerUser: "incorrect password"
-				};
-				var data_from_db=JSON.stringify(data_from_db);
-			}
-		}
-		else{
-			console.log( "incorrect login");
-			var data_from_db={
-				answerUser: "incorrect login"
-			};
-			var data_from_db=JSON.stringify(data_from_db);
-		}
-		sockWriteAndDestroy(sock, data_from_db);
-	});
-}
-
-/*function addTeacher(sock, db, dataJson){
-	console.log("addTeacher");
-	var loginTeacher=dataJson.dataUser.login;
-	db.query('select count(*) as bool from teachers where login_teacher="'loginTeacher'"',function(error,result,fields){
-		if(error){
-			console.log
-		}
-	});
-}*/
-
 function listGroup(sock, db, dataJson){
-	console.log("list group");
 	var idTeacher=dataJson.dataUser.id;
 	var arrInfoGroup=new Array();
 	var oneGroup;
-	db.query('select id_group, name_group, count(id_s)  as id_s from groups left join studentsandgroups on groups.id_group=studentsandgroups.id_g where groups.id_t="'+parseInt(idTeacher,10)+'" group by id_group order by id_group',function(error,result,fields){
+	var data_from_db;
+	db.query('select id_gr, name_group, institution, ts, st from groups join view_count_st_and_ts_in_gr as v on v.id=groups.id_gr where groups.id_tr="'+parseInt(idTeacher)+'"',function(error,result,fields){
 		if(error){
-			console.log("ErrorMySql_listGroup");
+			sendError(sock,error,"listGroup");
+			return;
 		}
 		if(result[0]!=undefined){
 			for(var i=0; i<result.length;i++){
 				oneGroup={
-					idGroup: result[i].id_group,
+					idGroup: result[i].id_gr,
 					nameGroup: result[i].name_group,
-					countStudents: result[i].id_s,
-					countProblems:0
+					institution: result[i].institution,
+					countStudents: result[i].st,
+					countProblems: result[i].ts,
 				};
 			    arrInfoGroup[i]=oneGroup;
-				console.log(arrInfoGroup[i]);
 			}
-			db.query('select  count(id_p) as id_p from groups left join problemsandgroups on groups.id_group=problemsandgroups.id_g where groups.id_t="'+parseInt(idTeacher,10)+'" group by id_group order by id_group',function(errorProblems,resultProblems,fieldsProblems){
-				if(errorProblems){
-					console.log("ErrorMySql_listGroup_countProblems");
-				}
-				for(var j=0; j<resultProblems.length;j++){
-				    arrInfoGroup[j].countProblems=resultProblems[j].id_p;
-				}
-				var data_from_db={
-					answer: "YesGroups",
-					infoGroup: arrInfoGroup,
-				};
-               	data_from_db=JSON.stringify(data_from_db);
-				console.log(data_from_db);
-				sock.write(data_from_db);
-				sock.destroy();
-			});		
+			data_from_db={
+				answer: "YesGroups",
+				infoGroup: arrInfoGroup,
+			};
+			console.log(data_from_db.toString());
 		}
 		else{
-			var data_from_db={
+			data_from_db={
 				answer: "noGroup"
 			};
-			data_from_db=JSON.stringify(data_from_db);
-			console.log(data_from_db);
-			sock.write(data_from_db);
-			sock.destroy();
 		}
+		sockWriteAndDestroy(sock, data_from_db);	
 	});
 }
 
-function listStudent(sock, db, dataJson){
-	var idGr=dataJson.dataReq.idGroup;
-	var arrInfoStudents= new Array();
-	db.query('select id_student, first_name_student,second_name_student FROM studentsandgroups INNER JOIN students ON students.id_student=studentsandgroups.id_s WHERE studentsandgroups.id_g="'+parseInt(idGr)+'"',function(error,result,fields){
-		if(error){
-			console.log("ErrorMySql_listStudent");
-		}
-		if(result!=undefined){
-			console.log(result);
-			for(var i=0;i<result.length;i++){
-				var oneStudent={
-					idStudent: result[i].id_student.toString(),
-					nameStudent: result[i].first_name_student.toString()+" "+result[i].second_name_student.toString(),
-				}
-                console.log(result[i].id_student);
-                arrInfoStudents[i]=oneStudent;
-				console.log(arrInfoStudents[i]);
-			}
-			var data_req={
-				answer: "yesStudents",
-				infoStudents: arrInfoStudents
-			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();
-		}
-		else{
-			console.log("noStudents");
-			var data_req={
-				answer: "error",
-			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();
-		}
-	});
-}
-
-function listProblems(sock, db, dataJson){
-	var idGr=dataJson.dataReq.idGroup;
+function listTasks(sock, db, dataJson){
+	var idTeacher=dataJson.dataReq.idTeacher;
 	var arrInfoProblems= new Array();
-	db.query('select id_problem,name_problem,SUBSTRING(text_problem,1,36) AS text FROM problemsandgroups INNER JOIN problems ON problems.id_problem=problemsandgroups.id_p WHERE problemsandgroups.id_g="'+parseInt(idGr)+'"',function(error,result,fields){
+	var data_from_db;
+	db.query('select id_ts,name_task,date_task FROM tasks WHERE id_tr="'+parseInt(idTeacher)+'"',function(error,result,fields){
 		if(error){
-			console.log("ErrorMySql_113");
+			sendError(sock,error,"listTasks");
+			return;
 		}
-		if(result!=undefined){
+		if(result[0]!=undefined){
 			for(var i=0;i<result.length;i++){
 				var oneProblem={
-					idProblem: result[i].id_problem.toString(),
-					nameProblem: result[i].name_problem.toString(),
-					textProblem:result[i].text.toString()
+					idTask: result[i].id_ts.toString(),
+					nameTask: result[i].name_task.toString(),
+					dateTask: result[i].date_task.toString(),
 				}											 
 				arrInfoProblems[i]=oneProblem;
 			}
-			var data_req={
-				answer: "yesProblems",
-				infoProblems: arrInfoProblems
+			data_from_db={
+				answer: "yesTasks",
+				infoTasks: arrInfoProblems
 			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();
 		}
 		else{
-			var data_req={
-				answer: "noProblems"
+			data_from_db={
+				answer: "noTasks"
 			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();
 		}
+		sockWriteAndDestroy(sock,data_from_db);	
 	});
 }
 
 function addNewGroup(sock, db, dataJson){
 	var nameNewGroup=dataJson.dataReq.nameNewGroup.toString();
+	var institution=dataJson.dataReq.institution.toString();
 	var idTeacher=dataJson.dataReq.idTeacher;
-	db.query('INSERT INTO groups(name_group,id_t) VALUES("'+nameNewGroup+'","'+parseInt(idTeacher)+'")',function(error,result,fields){
+	var data_from_db;
+	db.query('INSERT INTO groups(name_group,institution,id_tr) VALUES("'+nameNewGroup+'","'+institution+'","'+parseInt(idTeacher)+'")',function(error,result,fields){
 		if(error){
-			console.log("ErrorMySql_173");
-			var data_req={
-				answer: "error",
-			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();	
+			sendError(sock,error,"addNewGroup");
+			return;
 		}
-		var data_req={
+		data_from_db={
 			answer: "newGroupAdded",
 		}
-		data_req=JSON.stringify(data_req);
-		console.log(data_req);
-		sock.write(data_req);
-		sock.destroy();	
+		sockWriteAndDestroy(sock,data_from_db);	
 	});
 }
 
 function deleteGroup(sock, db, dataJson){
-	var idDeleteGroup=dataJson.dataReq.idObject.toString();
-	db.query('DELETE FROM  studentsandgroups WHERE id_g="'+parseInt(idDeleteGroup,10)+'"',function(errorDeleteSG,resultDeleteSG,fieldsDeleteSG){
+	var idDeleteGroup=dataJson.dataReq.idObject;
+	var data_from_db;
+	db.query('DELETE FROM  conn_st_gr WHERE id_gr="'+parseInt(idDeleteGroup,10)+'"',function(errorDeleteSG,resultDeleteSG,fieldsDeleteSG){
 		if(errorDeleteSG){
-			console.log("ErrorMySql_223");
-			var data_req={
-				answer: "error",
-			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();
+			sendError(sock,errorDeleteSG,"deleteGroup_student");
+			return;
 		}
-		db.query('DELETE FROM problemsandgroups WHERE id_g="'+parseInt(idDeleteGroup,10)+'"',function(errorDeletePG,resultDeletePG,fieldsDeletePG){
+		db.query('DELETE FROM conn_ts_gr WHERE id_gr="'+parseInt(idDeleteGroup,10)+'"',function(errorDeletePG,resultDeletePG,fieldsDeletePG){
 			if(errorDeletePG){
-				console.log("ErrorMySql_252");
-				var data_req={
-					answer: "error",
-				}
-				data_req=JSON.stringify(data_req);
-				console.log(data_req);
-				sock.write(data_req);
-				sock.destroy();
+				sendError(sock,errorDeletePG,"deleteGroup_task");
+				return;
 			}
-			db.query('DELETE FROM groups WHERE id_group="'+parseInt(idDeleteGroup,10)+'"',function(errorDeleteGroup,resultDeleteGroup,fieldsDeleteGroup){
+			db.query('DELETE FROM groups WHERE id_gr="'+parseInt(idDeleteGroup,10)+'"',function(errorDeleteGroup,resultDeleteGroup,fieldsDeleteGroup){
 				if(errorDeleteGroup){
-					console.log(errorDeleteGroup);
-					var data_req={
-						answer: "error",
-					}
-					data_req=JSON.stringify(data_req);
-					console.log(data_req);
-					sock.write(data_req);
-					sock.destroy();
+					sendError(sock,errorDeleteGroup,"deleteGroup");
+					return;
 				}
-				var data_req={
+				data_from_db={
 					answer: "groupDeleted",
 				}
-				data_req=JSON.stringify(data_req);
-				console.log(data_req);
-				sock.write(data_req);
-				sock.destroy();
+				sockWriteAndDestroy(sock,data_from_db);	
 			});
 		});
 	});
 }
 
-function deleteProblem(sock, db, dataJson){
-	var idDeleteGroup=dataJson.dataReq.idGroup.toString();
-	var idDeleteProblem=dataJson.dataReq.idObject.toString();
-	db.query('DELETE FROM  problemsandgroups WHERE id_p="'+parseInt(idDeleteProblem,10)+'" AND id_g="'+parseInt(idDeleteGroup,10)+'"',function(errorDeletePG,resultDeletePG,fieldsDeletePG){
-		if(errorDeletePG){
-			console.log(errorDeletePG);
+function deleteTask(sock, db, dataJson){
+	var idDeleteTask=dataJson.dataReq.idObject;
+	var data_from_db;
+	db.query('DELETE FROM  conn_ts_gr WHERE id_ts="'+parseInt(idDeleteTask,10)+'"',function(error,result,fields){
+		if(error){
+			sendError(sock,error,"deleteTask_conn_ts_gr");
+			return;
 		}
-		var data_req={
-			answer: "problemDeleted",
-		}
-		data_req=JSON.stringify(data_req);
-		console.log(data_req);
-		sock.write(data_req);
-		sock.destroy();
+		db.query('DELETE FROM tasks WHERE id_ts="'+parseInt(idDeleteTask,10)+'"',function(errorDeleteTask,resultDeleteTask,fieldsDeleteTask){
+			if(errorDeleteTask){
+				sendError(sock,errorDeleteTask,"deleteTask");
+				return;
+			}
+			data_from_db={
+				answer: "taskDeleted",
+			}
+			sockWriteAndDestroy(sock,data_from_db);	
+		});
 	});
 }
 
 function deleteStudent(sock, db, dataJson){
-	var idDeleteStudent=dataJson.dataReq.idObject.toString();
-	var idDeleteGroup=dataJson.dataReq.idGroup.toString();
-	db.query('DELETE FROM  studentsandgroups WHERE id_s="'+parseInt(idDeleteStudent,10)+'" AND id_g="'+parseInt(idDeleteGroup,10)+'"',function(errorDeleteSG,resultDeleteSG,fieldsDeleteSG){
-		if(errorDeleteSG){
-			console.log(errorDeleteSG);
+	var idStudent=dataJson.dataReq.idObject;
+	var idTeacher=dataJson.dataReq.idTeacher;
+	var data_from_db;
+	db.query('DELETE FROM  conn_st_tr WHERE id_st="'+parseInt(idStudent,10)+'" AND id_tr="'+parseInt(idTeacher,10)+'"',function(error,result,fields){
+		if(error){
+			sendError(sock,error,"deleteStudent_st");
+			return;
 		}
-		var data_req={
+		console.log(idStudent);
+		console.log(idTeacher);
+		db.query('DELETE FROM  Students WHERE id_st="'+parseInt(idStudent,10)+'" AND login_student is NULL',function(errorSt,resultSt,fieldsSt){
+		if(errorSt){
+			sendError(sock,errorSt,"deleteStudent");
+			return;
+		}
+	    data_from_db={
 			answer: "studentDeleted",
 		}
-		data_req=JSON.stringify(data_req);
-		console.log(data_req);
-		sock.write(data_req);
-		sock.destroy();
+		sockWriteAndDestroy(sock,data_from_db);
+		});
 	});
 }
 
-function getTextProblem(sock, db, dataJson){
-	var idProblem=dataJson.dataReq.idProblem.toString();
-	db.query('SELECT name_problem, text_problem FROM problems WHERE id_problem="'+parseInt(idProblem)+'"',function(error,result,fields){
+function getTextTask(sock, db, dataJson){
+	var idTask=dataJson.dataReq.idTask;
+	var data_from_db;
+	db.query('SELECT text_task FROM tasks WHERE id_ts="'+parseInt(idTask)+'"',function(error,result,fields){
 		if(error){
-			console.log("ErrorMySql_282");
+			sendError(sock,error,"getTextTask");
+			return;
 		}
 		if(result!=undefined){
-			var dataProblem={
-				nameProblem: result[0].name_problem.toString(),
-				textProblem: result[0].text_problem.toString(),
+			var dataTask={
+				textTask: result[0].text_task.toString(),
 			}
-			var data_req={
+			data_from_db={
 				answer: "ok",
-				dataProblem: dataProblem,
+				dataTask: dataTask,
 			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();
 		}
 		else{
-			var data_req={
+			data_from_db={
 				answer: "error",
 			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();
 		}
+		sockWriteAndDestroy(sock,data_from_db);
 	});
 }
 
-function addNewProblem(sock, db, dataJson){
-	var nameNewProblem=dataJson.dataReq.nameNewProblem.toString();
-	var textNewProblem=dataJson.dataReq.textNewProblem.toString();
-	var idGroup=dataJson.dataReq.idGroup;
-	db.query('INSERT INTO problems(name_problem,text_problem) VALUES("'+nameNewProblem+'","'+textNewProblem+'")',function(error,result,fields){
+function addNewTask(sock, db, dataJson){
+	var nameNewTask=dataJson.dataReq.nameNewTask.toString();
+	var textNewTask=dataJson.dataReq.textNewTask.toString();
+	var dateNewTask=dataJson.dataReq.dateNewTask.toString();
+	var idTeacher=dataJson.dataReq.idTeacher;
+	db.query('INSERT INTO tasks(name_task,date_task,text_task,id_tr) VALUES("'+nameNewTask+'","'+dateNewTask+'","'+textNewTask+'","'+parseInt(idTeacher)+'")',function(error,result,fields){
 		if(error){
-			console.log("ErrorMySql_281");
-			var data_req={
-				answer: "error",
-			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();	
+			sendError(sock,error,"addNewTask");
+			return;
 		}
-		db.query('INSERT INTO problemsandgroups(id_p,id_g) VALUES((SELECT MAX(id_problem) FROM problems),"'+parseInt(idGroup,10)+'")',function(errorPG,resultPG,fieldsPG){
-			 if(errorPG){
-				console.log("ErrorMySql_292");
-				var data_req={
-					answer: "error",
-				}
-				data_req=JSON.stringify(data_req);
-				console.log(data_req);
-				sock.write(data_req);
-				sock.destroy();	
-			}
-			var data_req={
-				answer: "newProblemAdded",
-			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();	
-		});
+		var data_req={
+			answer: "newTaskAdded",
+		}	
+		sockWriteAndDestroy(sock, data_req);
 	});
 }
 
 function addNewStudent(sock, db, dataJson){
 	var fnameNewStudent=dataJson.dataReq.fnameNewStudent.toString();
 	var snameNewStudent=dataJson.dataReq.snameNewStudent.toString();
-	var idGroup=dataJson.dataReq.idGroup;
-	db.query('INSERT INTO students(login_student,password_student, first_name_student,second_name_student) VALUES("login","pass","'+fnameNewStudent+'","'+snameNewStudent+'")',function(error,result,fields){
+	var institution=dataJson.dataReq.institution.toString();
+	var idTeacher=dataJson.dataReq.idTeacher;
+	var data_req;
+	db.query('INSERT INTO Students(login_student, password_student, f_name_student,s_name_student, institution) VALUES(null,null,"'+fnameNewStudent+'","'+snameNewStudent+'","'+institution+'")',function(error,result,fields){
 		if(error){
-			console.log("ErrorMySql_317");
-			var data_req={
-				answer: "error",
-			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();	
+			sendError(sock,error,"ErrorMySql_add_new_student");
+			return;
 		}
-		db.query('INSERT INTO studentsandgroups(id_s,id_g) VALUES((SELECT MAX(id_student) FROM students),"'+parseInt(idGroup,10)+'")',function(errorSG,resultSG,fieldsSG){
-			if(errorSG){
-				console.log("ErrorMySql_328");
-				var data_req={
-					answer: "error",
-				}
-				data_req=JSON.stringify(data_req);
-				console.log(data_req);
-				sock.write(data_req);
-				sock.destroy();	
+		db.query('INSERT INTO conn_st_tr(id_st,id_tr) VALUES((SELECT MAX(id_st) FROM Students),"'+parseInt(idTeacher,10)+'")',function(errorST,resultST,fieldsST){
+			if(errorST){
+				sendError(sock,errorST,"ErrorMySql_add_new_student_insert_into_connTrSt");
+				return;
 			}
-			var data_req={
+			data_req={
 				answer: "newStudentAdded",
 			}
-			data_req=JSON.stringify(data_req);
-			console.log(data_req);
-			sock.write(data_req);
-			sock.destroy();	
+			sockWriteAndDestroy(sock, data_req);
 		});
 	});
 }
 
+function getListStudents_forGroup(sock, db, dataJson){
+	var idGroup=dataJson.dataReq.idGroup;
+	var arrInfoStudent=new Array();
+	var data_from_db;
+	db.query('SELECT students.id_st as id_st, f_name_student,s_name_student,count_solvedOfTasks, count_unsolvedOfTasks from view_count_markOfTask as a join students on students.id_st=a.id_st where a.id_gr="'+parseInt(idGroup)+'"',function(error,result,fields){
+		if(error){
+			sendError(sock,error,"ErrorMySql_getListStudents_forGroup");
+			return;
+		}	
+		if(result[0]!=undefined){
+			for(var i=0;i<result.length;i++){
+				var oneStudent={
+					idStudent: result[i].id_st.toString(),
+					fnameStudent: result[i].f_name_student.toString(),
+					snameStudent: result[i].s_name_student.toString(),
+					countSolvedTask: 0,
+					countUnsolvedTask: 0,
+				}
+				if(result[i].count_solvedOfTasks!=null ){
+					oneStudent.countSolvedTask=result[i].count_solvedOfTasks.toString()
+				}
+				if(result[i].count_unsolvedOfTasks!=null){
+					oneStudent.countUnsolvedTask=result[i].count_unsolvedOfTasks.toString()
+				}
+				arrInfoStudent[i]=oneStudent;
+			}
+			data_from_db={
+				answer: "ok",
+				dataList: arrInfoStudent,
+			}
+		}
+		else{
+			data_from_db={
+				answer: "EMPTY"
+			}
+		}
+		console.log(data_from_db);
+		sockWriteAndDestroy(sock,data_from_db);	
+		
+	});
+}
+
+function getListTasks_forGroup(sock, db, dataJson){
+	var idGroup=dataJson.dataReq.idGroup;
+	var arrInfoTask=new Array();
+	var data_from_db;
+	db.query('SELECT id_ts, name_task FROM tasks WHERE id_ts IN (SELECT id_ts FROM conn_ts_gr WHERE id_gr="'+parseInt(idGroup)+'")',function(error,result,fields){
+		if(error){
+			sendError(sock,error,"ErrorMySql_getListTask_forGroup");
+			return;
+		}
+		if(result[0]!=undefined){
+			for(var i=0;i<result.length;i++){
+				var oneTask={
+					idTask: result[i].id_ts.toString(),
+					nameTask: result[i].name_task.toString(),
+				}											 
+				arrInfoTask[i]=oneTask;
+			}
+			data_from_db={
+				answer: "ok",
+				dataList: arrInfoTask,
+			}
+		}
+		else{
+			data_from_db={
+				answer: "EMPTY"
+			}
+		}
+		sockWriteAndDestroy(sock,data_from_db);	
+	});
+}
+
 exports.entry = entry;
+exports.registration=registration;
+
 exports.listGroup = listGroup;
-exports.listStudent = listStudent;
-exports.listProblems = listProblems;
+exports.listTasks = listTasks;
+exports.list_of_students=list_of_students;
+
 exports.addNewGroup = addNewGroup;
-exports.deleteGroup = deleteGroup;
-exports.deleteProblem = deleteProblem;
-exports.deleteStudent = deleteStudent;
-exports.getTextProblem = getTextProblem;
-exports.addNewProblem = addNewProblem;
+exports.addNewTask = addNewTask;
 exports.addNewStudent = addNewStudent;
 
-exports.list_of_students=list_of_students;
+exports.deleteGroup = deleteGroup;
+exports.deleteTask = deleteTask;
+exports.deleteStudent = deleteStudent;
+
+exports.getTextTask= getTextTask;
+exports.getListStudents_forGroup= getListStudents_forGroup;
+exports.getListTasks_forGroup= getListTasks_forGroup;

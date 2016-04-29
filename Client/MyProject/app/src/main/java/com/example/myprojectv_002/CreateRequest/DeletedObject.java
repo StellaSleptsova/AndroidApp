@@ -1,21 +1,20 @@
 package com.example.myprojectv_002.CreateRequest;
 
+import com.example.myprojectv_002.ClassesObject.UserInfo;
+
 import org.json.JSONObject;
 
-/**
- * Created by Пользователь on 14.12.2015.
- */
 public class DeletedObject {
 
     public DeletedObject() {
     }
 
-    public String createRequest(String objectDelete,Integer idObject,Integer idGroup) {
+    public String createRequest(String objectDelete,Integer idObject) {
         try {
             JSONObject object=new JSONObject();
             JSONObject dataReq=new JSONObject();
             dataReq.put("idObject", idObject);
-            dataReq.put("idGroup",idGroup);
+            dataReq.put("idTeacher", UserInfo.idUser);
             object.put("req","delete"+objectDelete);
             object.put("dataReq", dataReq);
             return (object.toString());

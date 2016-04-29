@@ -11,60 +11,44 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".Activity_Main">
 
+
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/main_image"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/main_image">
+        android:layout_centerVertical="true">
 
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="fitXY"
-            android:src="@mipmap/ht_launcher" />
+            android:src="@mipmap/ht_launcher"
+            android:layout_centerHorizontal="true"
+            android:tint="@color/colorWhite"/>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/button_teacher"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main_image"
-        android:layout_centerHorizontal="true">
+        android:layout_above="@+id/button_student"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="@string/str_teacher"
+        android:textColor="@color/colorWhite" />
 
-        <TextView
-            android:id="@+id/title_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/colorWhite"
-            android:textSize="40sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+    <Button
+        android:id="@+id/button_student"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimaryDark"
+        android:text="@string/str_student"
+        android:textColor="@color/colorWhite"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp" />
 </RelativeLayout>
-
-<Button
-android:id="@+id/button_entry_main"
-android:layout_width="270dp"
-android:layout_height="wrap_content"
-android:layout_above="@+id/button_reg_main"
-android:layout_alignLeft="@+id/button_reg_main"
-android:layout_alignStart="@+id/button_reg_main"
-android:layout_marginBottom="10dp"
-android:background="@color/colorWhite"
-android:text="@string/str_entry"
-android:textColor="@color/colorPrimaryDark" />
-
-<Button
-android:id="@+id/button_reg_main"
-android:layout_width="270dp"
-android:layout_height="wrap_content"
-android:layout_alignParentBottom="true"
-android:layout_centerHorizontal="true"
-android:background="@color/colorWhite"
-android:text="@string/str_req"
-android:textColor="@color/colorPrimaryDark" /></RelativeLayout>

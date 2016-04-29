@@ -9,11 +9,12 @@ public class AddNewGroup {
     public AddNewGroup() {
     }
 
-    public String createRequest(String str) {
+    public String createRequest(String name,String institution) {
         try {
             JSONObject object = new JSONObject();
             JSONObject dataReq = new JSONObject();
-            dataReq.put("nameNewGroup", str);
+            dataReq.put("nameNewGroup", name);
+            dataReq.put("institution", institution);
             dataReq.put("idTeacher", UserInfo.idUser.toString());
             object.put("req", "addNewGroup");
             object.put("dataReq", dataReq);

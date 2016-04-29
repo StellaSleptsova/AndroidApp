@@ -2,8 +2,8 @@
     <string name="app_name">AndroidApp</string>
     <string name="str_entry">Вход</string>
     <string name="str_req">Регистрация</string>
-    <string name="str_button_entry">Вход</string>
-    <string name="str_button_reg">Регистрация</string>
+    <string name="str_button_entry">Войти</string>
+    <string name="str_button_reg">Зарегистрироваться</string>
 
     <string name="search_title">Search</string>
 
@@ -17,5 +17,10 @@
     <string name="button_text_add_group">Добавить группу</string>
     <string name="str_count_students">Студенты:</string>
     <string name="str_count_problems">Задачи:</string>
-    <string name="str_send_message">Send message</string>
+    <string name="str_send_message">Сообщение</string>
+    <string name="item_delete">Удалить</string>
+    <string name="item_change">Изменить</string>
+    <string name="fill_all">Заполните все поля.</string>
+    <string name="str_student">Студент</string>
+    <string name="str_teacher">Преподаватель</string>
 </resources>

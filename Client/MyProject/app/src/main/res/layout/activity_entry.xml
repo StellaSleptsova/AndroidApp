@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:fitsSystemWindows="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".Activity_Main">
+
+    <RelativeLayout
+        android:id="@+id/main_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/ht_launcher"
+            android:tint="@color/colorWhite" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_image"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:imeOptions="actionSend|flagNoEnterAction">
+
+        <EditText
+            android:id="@+id/et_login_entry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/colorWhite"
+            android:hint="Логин"
+            android:paddingLeft="10dp"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorGray"
+            android:textSize="16dp"
+            android:imeOptions="actionSend|flagNoEnterAction"/>
+
+        <EditText
+            android:id="@+id/et_password_entry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_login_entry"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/colorWhite"
+            android:hint="Пароль"
+            android:inputType="textPassword"
+            android:paddingLeft="10dp"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorGray"
+            android:textSize="16dp"
+            android:imeOptions="actionSend|flagNoEnterAction"/>
+
+        <Button
+            android:id="@+id/button_entry_main"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/et_password_entry"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="30dp"
+            android:background="@color/colorPrimaryDark"
+            android:imeOptions="actionSend|flagNoEnterAction"
+            android:text="@string/str_button_entry"
+            android:textColor="@color/colorWhite"
+            android:textSize="13dp" />
+    </RelativeLayout>
+
+        <Button
+            android:id="@+id/button_reg_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorPrimary"
+            android:imeOptions="actionSend|flagNoEnterAction"
+            android:stateListAnimator="@null"
+            android:text="@string/str_button_reg"
+            android:textColor="@color/colorWhite"
+            android:textSize="13dp"
+            android:textStyle="bold" />
+
+</RelativeLayout>

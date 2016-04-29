@@ -16,6 +16,7 @@ public class NavigationListAdapter extends ArrayAdapter<Navigation_Item> {
     Context context;
     int resLayout;
     List<Navigation_Item> listNavItems;
+    View v;
 
     public NavigationListAdapter(Context context, int resLayout, List<Navigation_Item> listNavItems) {
         super(context, resLayout, listNavItems);
@@ -28,7 +29,7 @@ public class NavigationListAdapter extends ArrayAdapter<Navigation_Item> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View v = View.inflate(context,resLayout,null);
+        v = View.inflate(context,resLayout,null);
 
         TextView tvTitle = (TextView) v.findViewById(R.id.title);
         ImageView navIcon = (ImageView) v.findViewById(R.id.imageIcon);

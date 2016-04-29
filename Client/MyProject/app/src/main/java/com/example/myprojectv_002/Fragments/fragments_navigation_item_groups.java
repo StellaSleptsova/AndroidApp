@@ -4,11 +4,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.example.myprojectv_002.Activity_Navigation;
 import com.example.myprojectv_002.ClassesObject.GroupInfo;
@@ -17,98 +17,74 @@ import com.example.myprojectv_002.ClassesObject.UserInfo;
 import com.example.myprojectv_002.CreateRequest.ListGroups;
 import com.example.myprojectv_002.CreateRequest.SendRequest;
 import com.example.myprojectv_002.R;
-import com.example.myprojectv_002.ResourceAdapter.Group_adapter;
-import com.example.myprojectv_002.ResourceItem.Group_item;
+import com.example.myprojectv_002.ResourceAdapter.RecyclerAdapter__empty;
+import com.example.myprojectv_002.ResourceAdapter.RecyclerAdapter_groups;
 
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 public class fragments_navigation_item_groups extends Fragment {
 
-    static FloatingActionButton fab_group;
-    int countGroups;
-    Group_adapter ListAdapter;
-    ListView listView;
-    List<GroupInfo> groups;
-    List<Group_item> listItem;
-    Boolean yesGroup=true;
-    View v;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerAdapter_groups mAdapter;
+    public  ListGroups listGroups = null;
+    public boolean isChange = false;
+    static View v;
+    public static   FloatingActionButton fab_group;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_groups, container, false);
+        Activity_Navigation.toolbar.setTitle("Группы");
 
-        Activity_Navigation.toolbar.setTitle("Группы: студенты");
-        ListGroupTask at = new ListGroupTask();
-        at.execute();
+        if (listGroups == null || isChange) {
+            v = inflater.inflate(R.layout.fragment_groups, container, false);
+
+            mRecyclerView = (RecyclerView) v.findViewById(R.id.rv_group);
+            mRecyclerView.setHasFixedSize(true);
+            mLayoutManager = new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+
+            isChange = false;
+            GetListOfGroup getStudent = new GetListOfGroup();
+            getStudent.execute();
+        }
         return v;
     }
 
-    private void initListGroup(List<GroupInfo> listGroups) {
-        groups = listGroups;
-        countGroups = groups.size();
+    private void initListGroup(List<GroupInfo> listGroup) {
+        mAdapter = new RecyclerAdapter_groups(listGroup);
+        mRecyclerView.setAdapter(mAdapter);
+    }
 
-        if(countGroups==0){
-            yesGroup=false;
-            listItem.add(new Group_item("У вас пока нет групп. \n Добавьте группу нажав на +","",""));
-        }
-        else {
-            yesGroup=true;
-            listItem = new ArrayList<Group_item>();
-            for (int i = 0; i < countGroups; i++) {
-                listItem.add(new Group_item(groups.get(i).nameGroup, groups.get(i).countStudents.toString(), groups.get(i).countProblems.toString()));
-            }
-        }
+    private void initEmptyCard() {
+        RecyclerAdapter__empty recyclerAdapter__empty = new RecyclerAdapter__empty
+                ("У вас нет групп.\nДобавьте группу,\n нажав на  +");
+        mRecyclerView.setAdapter(recyclerAdapter__empty);
+    }
 
-        listView = (ListView) v.findViewById(R.id.list_groups);
-        ListAdapter = new Group_adapter(getActivity(), R.layout.item_list_groups, listItem);
-        listView.setAdapter(ListAdapter);
-
-        if(yesGroup) {
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    fragment_list_student fragment_list_student=new fragment_list_student();
-                    fragment_list_student.setIdGroup(groups.get(position).idGroup);
-                    Activity_Navigation.fragmentManager.beginTransaction().replace(R.id.main_content, fragment_list_student).addToBackStack("stack").commit();
-                }
-            });
-
-            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    fragment_menu fragment_menu=new fragment_menu();
-                    fragment_menu.setNameAction("Group");
-                    fragment_menu.setId(groups.get(position).idGroup);
-                    Activity_Navigation.fragmentManager.beginTransaction().replace(R.id.layout_list_groups, fragment_menu ).addToBackStack("stack").commit();
-                    fab_group.setVisibility(View.INVISIBLE);
-                    return true;
-                }
-            });
-        }
-
-        fab_group = (FloatingActionButton) v.findViewById(R.id.fab_group);
+    public void initFab() {
+        fab_group = (FloatingActionButton) v.findViewById(R.id.fab_list_group);
         fab_group.setVisibility(View.VISIBLE);
         fab_group.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity_Navigation.fragmentManager.beginTransaction().replace(R.id.layout_list_groups, new fragment_add_group()).addToBackStack("stack").commit();
+                fragment_add_group fragment_add_group = new fragment_add_group();
+                Activity_Navigation.fragmentManager.beginTransaction().replace(R.id.clayout_list_group, fragment_add_group).addToBackStack("stack").commit();
                 fab_group.setVisibility(View.INVISIBLE);
             }
         });
     }
 
-
-    public class ListGroupTask extends AsyncTask<String, Void, String> {
+    public class GetListOfGroup extends AsyncTask<String, Void, String> {
         private Socket socketClient = null;
-        private ListGroups listGroups = null;
         private SendRequest sendRequest = null;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            Activity_Navigation.progressDialog.show();
             listGroups = new ListGroups();
             sendRequest = new SendRequest();
         }
@@ -118,14 +94,17 @@ public class fragments_navigation_item_groups extends Fragment {
             try {
                 socketClient.close();
                 System.out.println(ret);
+                Activity_Navigation.progressDialog.dismiss();
                 switch (listGroups.getResponse(ret)) {
                     case "YesGroups":
                         initListGroup(listGroups.getGroups());
                         break;
-                    case "":
-                        /*ERROR*/
+                    case "noGroup":
+                        initEmptyCard();
+                        isChange = true;
                         break;
                 }
+                initFab();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -135,7 +114,6 @@ public class fragments_navigation_item_groups extends Fragment {
         protected String doInBackground(String... data) {
             try {
                 InetAddress serverAddr = InetAddress.getByName(ServerInfo.getIP());
-                System.out.println(serverAddr);
                 socketClient = new Socket(serverAddr, ServerInfo.getPort());
                 return (sendRequest.SendAndGet(socketClient, listGroups.createRequest(UserInfo.idUser)));
             } catch (Exception e) {

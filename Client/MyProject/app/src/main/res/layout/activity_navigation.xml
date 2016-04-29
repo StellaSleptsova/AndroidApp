@@ -35,7 +35,7 @@
         <RelativeLayout
             android:id="@+id/profile_box"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="170dp"
             android:background="@drawable/drawer_header">
 
             <ImageView
@@ -73,6 +73,16 @@
                     android:textSize="13sp"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/profile_institution"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Login"
+                    android:layout_marginLeft="15dp"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
             </LinearLayout>
 
         </RelativeLayout>
@@ -85,7 +95,9 @@
             android:background="@color/colorWhite"
             android:choiceMode="singleChoice"
             android:dividerHeight="0dp"
-            android:divider="@color/colorWhite"/>
+            android:divider="@color/colorWhite"
+            android:drawSelectorOnTop="false"
+            android:listSelector="@color/colorGray"/>
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

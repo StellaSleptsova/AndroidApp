@@ -1,0 +1,135 @@
+mysql> create view view_count_st_and_ts_in_gr as (
+    -> select A.id,A.tr, A.ts, B.st from (
+    -> select groups.id_gr as id,groups.id_tr as tr, count(conn_ts_gr.id_gr) as
+ts from groups left join conn_ts_gr on groups.id_gr=conn_ts_gr.id_gr group by gr
+oups.id_gr order by id DESC) as A
+    -> join (
+    -> select groups.id_gr as id, count(conn_st_gr.id_gr) as st from groups left
+ join conn_st_gr on groups.id_gr=conn_st_gr.id_gr group by groups.id_gr order by
+ id DESC) as B
+    -> on A.id=B.id);
+
+
+
+mysql> delimiter $$
+mysql> create trigger trigger_beforeInsertStudent_inGroup
+    -> after insert on conn_st_gr
+    -> for each row
+    -> begin
+    -> declare done int default 0;
+    -> declare a int;
+    -> declare mycursor cursor for select id_ts from conn_ts_gr where id_gr=new.
+id_gr;
+    -> DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = 1;
+    -> open mycursor;
+    -> fetch mycursor into a;
+    -> while done=0 do
+    -> insert into mark_of_task(id_gr,id_st,id_ts,mark) values(new.id_gr,new.id_
+st,a,0);
+    -> fetch mycursor into a;
+    -> end while;
+    -> close mycursor;
+    -> end;
+    -> end$$
+
+
+
+
+mysql> create
+    -> trigger trigger_afterDeleteGroup
+    -> after delete on groups
+    -> for each row
+    -> begin
+    -> delete from mark_of_task where id_gr=old.id_gr;
+    -> end;
+    -> end$$
+
+
+
+
+mysql> create
+    -> trigger trigger_afterDeleteStudent
+    -> after delete on students
+    -> for each row
+    -> begin
+    -> delete from mark_of_task where id_st=old.id_st;
+    -> end;
+    -> end$$
+
+
+
+
+mysql> create
+    -> trigger trigger_afterDeleteTask
+    -> after delete on tasks
+    -> for each row
+    -> begin
+    -> delete from mark_of_task where id_ts=old.id_ts;
+    -> end;
+    -> end$$
+
+
+
+
+
+mysql> update mark_of_task set mark=1 where id_gr=1 and id_st=1 and id_ts=9;
+
+
+
+
+mysql> select id_gr, id_st, count(id_ts) as count_solvedOfTasks from mark_of_tas
+k where mark=1 group by id_st,id_gr;
+
+
+mysql> select id_gr, id_st, count(id_ts) as count_unsolvedOfTasks from mark_of_tas
+k where mark=0 group by id_st,id_gr;
+
+
+
+
+
+mysql> select A.id_gr, A.id_st, A.count_solvedOfTasks, B.count_unsolvedOfTasks f
+rom ( select id_gr, id_st, count(id_ts) as count_solvedOfTasks from mark_of_task
+ where mark=1 group by id_st,id_gr) as A  left join ( select id_gr,id_st, count
+(id_ts) as count_unsolvedOfTasks from mark_of_task where mark=0 group by id_st,i
+d_gr) as B on A.id_gr=B.id_gr and A.id_st=B.id_st;
+
+
+
+
+
+
+mysql> select A.id_gr, A.id_st, A.count_solvedOfTasks, B.count_unsolvedOfTasks f
+rom ( select id_gr, id_st, count(id_ts) as count_solvedOfTasks from mark_of_task
+ where mark=1 group by id_st,id_gr) as A  left join ( select id_gr,id_st, count(
+id_ts) as count_unsolvedOfTasks from mark_of_task where mark=0 group by id_st,id
+_gr) as B on A.id_gr=B.id_gr and A.id_st=B.id_st
+    -> union
+    -> select B.id_gr, B.id_st, A.count_solvedOfTasks, B.count_unsolvedOfTasks f
+rom ( select id_gr, id_st, count(id_ts) as count_solvedOfTasks from mark_of_task
+ where mark=1 group by id_st,id_gr) as A  right join ( select id_gr,id_st, count
+(id_ts) as count_unsolvedOfTasks from mark_of_task where mark=0 group by id_st,i
+d_gr) as B on A.id_gr=B.id_gr and A.id_st=B.id_st;
+
+
+
+
+
+
+mysql> create view view_count_markOfTask as
+    -> (select A.id_gr as id_gr, A.id_st as id_st, A.count_solvedOfTasks as coun
+t_solvedOfTasks, B.count_unsolvedOfTasks as count_unsolvedOfTasks from ( select
+id_gr, id_st, count(id_ts) as count_solvedOfTasks from mark_of_task where mark=1
+ group by id_st,id_gr) as A  left join ( select id_gr,id_st, count(id_ts) as cou
+nt_unsolvedOfTasks from mark_of_task where mark=0 group by id_st,id_gr) as B on
+A.id_gr=B.id_gr and A.id_st=B.id_st)
+    -> union
+    -> (select B.id_gr as id_gr, B.id_st as id_st, A.count_solvedOfTasks as coun
+t_solvedOfTasks, B.count_unsolvedOfTasks as count_unsolvedOfTasks from ( select
+id_gr, id_st, count(id_ts) as count_solvedOfTasks from mark_of_task where mark=1
+ group by id_st,id_gr) as A  right join ( select id_gr,id_st, count(id_ts) as co
+unt_unsolvedOfTasks from mark_of_task where mark=0 group by id_st,id_gr) as B on
+ A.id_gr=B.id_gr and A.id_st=B.id_st);
+
+
+

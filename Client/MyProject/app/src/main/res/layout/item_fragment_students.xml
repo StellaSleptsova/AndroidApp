@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorWhite"
-            android:paddingTop="5dp">
+            android:paddingTop="3dp">
 
             <RelativeLayout
                 android:id="@+id/rLayout_infoStudent"
@@ -27,17 +27,17 @@
 
                 <ImageView
                     android:id="@+id/profile_student"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="8dp"
                     android:background="@mipmap/ic_account"
                     android:tint="@color/colorPrimary"/>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="12dp"
+                    android:layout_marginTop="8dp"
                     android:layout_toRightOf="@+id/profile_student">
 
                     <TextView
@@ -47,7 +47,7 @@
                         android:layout_alignParentTop="true"
                         android:text="Name of student"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"/>
 
                     <TextView
@@ -57,8 +57,17 @@
                         android:layout_below="@+id/text_student_name"
                         android:layout_marginTop="2dp"
                         android:text="Student of SPBU"
-                        android:textSize="12sp" />
+                        android:textSize="13sp" />
                 </RelativeLayout>
+                <Button
+                    android:id="@+id/button_show_menu_student"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="8dp"
+                    android:background="@mipmap/ic_dots_vertical"
+                    android:stateListAnimator="@null" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -71,7 +80,7 @@
                     android:id="@+id/button_send_message"
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginTop="4dp"
                     android:background="@color/colorWhite"
                     android:stateListAnimator="@null"
@@ -86,19 +95,19 @@
                     android:layout_toRightOf="@+id/button_send_message"
                     android:background="@color/colorWhite"
                     android:stateListAnimator="@null"
-                    android:text="help"
+                    android:text="Статистика"
                     android:layout_marginTop="4dp"
                     android:textSize="12sp"
                     android:textColor="@color/colorTextSubtitle" />
 
                 <Button
                     android:id="@+id/button_show_listGroup"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="25dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignTop="@+id/button_help"
-                    android:background="@mipmap/ic_keyboard_arrow_up"
+                    android:background="@mipmap/ic_chevron_up"
                     android:stateListAnimator="@null" />
             </RelativeLayout>
 
@@ -114,7 +123,10 @@
                     android:background="@color/colorWhite"
                     android:choiceMode="singleChoice"
                     android:dividerHeight="0dp"
-                    android:divider="@color/colorWhite"/>
+                    android:divider="@color/colorWhite"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
